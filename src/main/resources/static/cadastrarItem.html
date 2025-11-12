@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>Cadastrar Itens</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h2>Cadastrar Item</h2>
+<form id="itemForm">
+    <input name="codigo" placeholder="Código" required />
+    <input name="nome" placeholder="Nome do Item" required />
+    <input name="cadastradoPor" placeholder="Cadastrado por" required />
+    <button type="submit">Salvar</button>
+</form>
+
+<h2>Itens Cadastrados</h2>
+<table id="itemTable">
+    <thead>
+    <tr><th>Código</th><th>Nome</th><th>Cadastrado Por</th><th>Ações</th></tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    async function carregarItens() {
+        const res = await fetch('/itens/list');
+        const itens = await res.json();
+        const tbody = document.querySelector('#itemTable tbody');
+        tbody.innerHTML = '';
+        itens.forEach(item => {
+            tbody.innerHTML += `<tr>
+          <td>${item.codigo}</td>
+          <td>${item.nome}</td>
+          <td>${item.cadastradoPor}</td>
+          <td><a href="detalhesItem.html?id=${item.id}">Detalhes</a></td>
+        </tr>`;
+        });
+    }
+
+    document.getElementById('itemForm').addEventListener('submit', async evt => {
+        evt.preventDefault();
+        const form = evt.target;
+        const item = {
+            codigo: form.codigo.value,
+            nome: form.nome.value,
+            cadastradoPor: form.cadastradoPor.value,
+            ativo: true
+        };
+        await fetch('/itens/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(item)
+        });
+        carregarItens();
+        form.reset();
+    });
+
+    carregarItens();
+</script>
+</body>
+</html>

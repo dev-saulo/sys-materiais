@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>Detalhes do Item</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h2>Editar Item</h2>
+<form id="editForm">
+    <input name="codigo" placeholder="Código" required />
+    <input name="nome" placeholder="Nome" required />
+    <label><input type="checkbox" name="ativo" /> Ativo</label>
+    <button type="submit">Atualizar</button>
+</form>
+
+<script>
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+
+    async function carregarItem() {
+        const res = await fetch(`/itens/list`);
+        const itens = await res.json();
+        const item = itens.find(i => i.id == id);
+        if (item) {
+            document.editForm.codigo.value = item.codigo;
+            document.editForm.nome.value = item.nome;
+            document.editForm.ativo.checked = item.ativo;
+        }
+    }
+
+    document.getElementById('editForm').addEventListener('submit', async evt => {
+        evt.preventDefault();
+        const form = evt.target;
+        const item = {
+            codigo: form.codigo.value,
+            nome: form.nome.value,
+            ativo: form.ativo.checked
+        };
+        await fetch(`/itens/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(item)
+        });
+        alert('Item atualizado');
+    });
+
+    carregarItem();
+</script>
+</body>
+</html>

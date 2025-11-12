@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Login</h1>
+<form id="loginForm">
+    <input name="username" placeholder="Usuário" required />
+    <input name="password" type="password" placeholder="Senha" required />
+    <button type="submit">Entrar</button>
+</form>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async evt => {
+        evt.preventDefault();
+        const form = evt.target;
+        const res = await fetch(`/auth/login?username=${form.username.value}&password=${form.password.value}`, { method: 'POST' });
+        if (res.ok) {
+            const role = await res.text();
+            sessionStorage.setItem('role', role);
+            window.location.href = 'home.html';
+        } else {
+            alert('Login inválido');
+        }
+    });
+</script>
+</body>
+</html>

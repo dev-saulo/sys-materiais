@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>Usuários</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h2>Cadastrar Usuário</h2>
+<form id="usuarioForm">
+    <input name="matricula" placeholder="Matrícula" required />
+    <input name="nome" placeholder="Nome" required />
+    <button type="submit">Salvar</button>
+</form>
+
+<h2>Lista de Usuários</h2>
+<table id="usuarioTable">
+    <thead>
+    <tr><th>Matrícula</th><th>Nome</th><th>Status</th><th>Ações</th></tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    async function carregarUsuarios() {
+        const res = await fetch('/usuarios/list');
+        const usuarios = await res.json();
+        const tbody = document.querySelector('#usuarioTable tbody');
+        tbody.innerHTML = '';

@@ -1,0 +1,12 @@
+package repository;
+
+import model.Item;
+import org.springframework.stereotype.Repository;
+import java.util.List;
+
+@Repository
+public interface ItemRepository {
+    List<Item> findAll();
+    Item save(Item item);
+    List<Item> findByAtivoTrue();
+}

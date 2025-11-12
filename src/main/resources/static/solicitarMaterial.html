@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>Solicitar Material</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h2>Solicitar Material</h2>
+<form id="solicitacaoForm">
+    <div id="checkboxes"></div>
+    <button type="submit" id="btnSalvar" style="display:none;">Salvar</button>
+</form>
+
+<script>
+    async function carregarItens() {
+        const res = await fetch('/itens/list');
+        const itens = await res.json();
+        const container = document.getElementById('checkboxes');
+        container.innerHTML = '';
+        itens.filter(i => i.ativo).forEach(item => {
+            container.innerHTML += `<label>
+          <input type="checkbox" value="${item.id}" /> ${item.nome}
+        </label><br>`;
+        });
+    }
+
+    document.getElementById('checkboxes').addEventListener('change', () => {
+        const checked = document.querySelectorAll('#checkboxes input:checked');
+        document.getElementById('btnSalvar').style.display = checked.length > 0 ? 'inline' : 'none';
+    });
+
+    document.getElementById('solicitacaoForm').addEventListener('submit', async evt => {
+        evt.preventDefault();
+        const ids = Array.from(document.querySelectorAll('#checkboxes input:checked')).map(cb => parseInt(cb.value));
+        const solicitacao = {
+            solicitante: 'usuario', // pode ser dinâmico
+            itensIds: ids
+        };
+        await fetch('/solicitacoes/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(solicitacao)
+        });
+        alert('Solicitação registrada');
+    });
+
+    carregarItens();
+</script>
+</body>
+</html>

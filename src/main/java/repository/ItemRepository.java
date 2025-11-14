@@ -1,6 +1,6 @@
 package repository;
 
-import model.Item;
+import com.keeper.sys_materiais.model.Item;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 

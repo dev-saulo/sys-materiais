@@ -1,6 +1,6 @@
 package repository;
 
-import model.Item;
+import com.keeper.sys_materiais.model.Item;
 import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
 @Repository
 public class ItemRepositoryImpl implements ItemRepository {
 
-    private List<Item> items = new ArrayList<>();
+    private final List<Item> items = new ArrayList<>();
     private Long currentId = 1L;
 
     @Override
@@ -36,7 +36,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public List<Item> findByAtivoTrue() {
         return items.stream()
-                .filter(item -> item.isAtivo())
+                .filter(item -> Boolean.TRUE.equals(item.getAtivo()))
                 .collect(java.util.stream.Collectors.toList());
     }
 }

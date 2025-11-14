@@ -1,6 +1,6 @@
 package repository;
 
-import model.Solicitacao;
+import com.keeper.sys_materiais.model.Solicitacao;
 import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.Iterator;

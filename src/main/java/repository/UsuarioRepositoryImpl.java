@@ -1,6 +1,6 @@
 package repository;
 
-import model.Usuario;
+import com.keeper.sys_materiais.model.Usuario;
 import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;

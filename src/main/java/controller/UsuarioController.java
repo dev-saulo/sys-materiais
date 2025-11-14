@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import model.Usuario;
+import com.keeper.sys_materiais.model.Usuario;
 import repository.UsuarioRepository;
 import java.util.List;
 

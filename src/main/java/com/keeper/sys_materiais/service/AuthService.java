@@ -1,10 +1,10 @@
-package service;
+package com.keeper.sys_materiais.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import model.User;
-import repository.UserRepository;
+import com.keeper.sys_materiais.model.User;
+import com.keeper.sys_materiais.repository.UserRepository;
 
 @Service
 public class AuthService {

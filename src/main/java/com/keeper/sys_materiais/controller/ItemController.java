@@ -1,11 +1,11 @@
-package controller;
+package com.keeper.sys_materiais.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-import repository.ItemRepository;
+import com.keeper.sys_materiais.repository.ItemRepository;
 
 import java.util.List;
 

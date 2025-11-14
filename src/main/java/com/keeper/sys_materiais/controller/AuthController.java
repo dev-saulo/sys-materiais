@@ -1,11 +1,11 @@
-package controller;
+package com.keeper.sys_materiais.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import service.AuthService;
-import model.User;
+import com.keeper.sys_materiais.service.AuthService;
+import com.keeper.sys_materiais.model.User;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,4 +1,4 @@
-package model;
+package com.keeper.sys_materiais.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,4 +1,4 @@
-package repository;
+package com.keeper.sys_materiais.repository;
 
 import com.keeper.sys_materiais.model.Usuario;
 import org.springframework.stereotype.Repository;

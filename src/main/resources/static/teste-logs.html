@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste do Sistema de Logs</title>
+    <script src="error-logger.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 10px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button.danger {
+            background: #dc3545;
+        }
+        button.danger:hover {
+            background: #c82333;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .result.error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        .result.success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #495057;
+        }
+        code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste do Sistema de Logs</h1>
+        <p>Use os botões abaixo para testar o sistema de logging de erros.</p>
+
+        <div class="section">
+            <h2>📋 Logs Automáticos</h2>
+            <p>Estes testes geram erros que são capturados automaticamente:</p>
+
+            <button onclick="testarErroJavaScript()">
+                🔴 Gerar Erro JavaScript
+            </button>
+
+            <button onclick="testarPromiseRejection()">
+                ⚠️ Gerar Promise Rejection
+            </button>
+
+            <button onclick="testarErroReferencia()">
+                ❌ Erro de Referência
+            </button>
+        </div>
+
+        <div class="section">
+            <h2>✍️ Logs Manuais</h2>
+            <p>Estes testes usam <code>window.logError()</code> para logar manualmente:</p>
+
+            <button onclick="testarLogManual()">
+                📝 Log Manual Simples
+            </button>
+
+            <button onclick="testarLogComDetalhes()">
+                📊 Log com Detalhes
+            </button>
+        </div>
+
+        <div class="section">
+            <h2>🌐 Logs de Rede</h2>
+            <p>Testes de requisições HTTP com logging:</p>
+
+            <button onclick="testarRequisicaoValida()">
+                ✅ Requisição Válida
+            </button>
+
+            <button onclick="testarRequisicaoInvalida()" class="danger">
+                🚫 Requisição Inválida
+            </button>
+
+            <button onclick="testarErroConexao()" class="danger">
+                📡 Erro de Conexão
+            </button>
+        </div>
+
+        <div class="section">
+            <h2>📁 Verificar Logs</h2>
+            <p>Após executar os testes, verifique os arquivos criados em:</p>
+            <code>logs/frontend-error_[DATA].txt</code>
+            <br><br>
+            <p>Use o PowerShell para ver em tempo real:</p>
+            <code>Get-Content -Path "logs\frontend-error_*.txt" -Wait</code>
+        </div>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        function showResult(message, isError = false) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = message;
+            resultDiv.className = 'result show ' + (isError ? 'error' : 'success');
+
+            setTimeout(() => {
+                resultDiv.className = 'result';
+            }, 5000);
+        }
+
+        // Testes de Erros Automáticos
+        function testarErroJavaScript() {
+            showResult('🔴 Gerando erro JavaScript...', true);
+            setTimeout(() => {
+                throw new Error('Erro de teste gerado intencionalmente!');
+            }, 100);
+        }
+
+        function testarPromiseRejection() {
+            showResult('⚠️ Gerando promise rejection...', true);
+            setTimeout(() => {
+                Promise.reject('Promise rejeitada para teste!');
+            }, 100);
+        }
+
+        function testarErroReferencia() {
+            showResult('❌ Gerando erro de referência...', true);
+            setTimeout(() => {
+                // Tentar acessar variável não definida
+                console.log(variavelNaoDefinida.propriedade);
+            }, 100);
+        }
+
+        // Testes de Logs Manuais
+        function testarLogManual() {
+            showResult('📝 Enviando log manual...');
+            window.logError('Teste de log manual', {
+                timestamp: new Date().toISOString(),
+                origem: 'teste-logs.html'
+            });
+            console.log('✅ Log manual enviado!');
+        }
+
+        function testarLogComDetalhes() {
+            showResult('📊 Enviando log detalhado...');
+            window.logError('Log de teste com detalhes completos', {
+                usuario: { id: 123, nome: 'Teste' },
+                acao: 'teste_sistema_logs',
+                dados: {
+                    navegador: navigator.userAgent,
+                    tela: `${screen.width}x${screen.height}`,
+                    idioma: navigator.language
+                },
+                timestamp: new Date().toISOString()
+            });
+            console.log('✅ Log detalhado enviado!');
+        }
+
+        // Testes de Rede
+        async function testarRequisicaoValida() {
+            showResult('✅ Testando requisição válida...');
+            try {
+                const res = await fetch('/usuarios/list');
+                if (res.ok) {
+                    const data = await res.json();
+                    showResult(`✅ Requisição bem-sucedida! ${data.length} usuários retornados.`);
+                    console.log('Dados:', data);
+                } else {
+                    showResult(`⚠️ Requisição retornou status: ${res.status}`, true);
+                }
+            } catch (error) {
+                showResult(`❌ Erro na requisição: ${error.message}`, true);
+                window.logError('Erro ao testar requisição válida', { error: error.toString() });
+            }
+        }
+
+        async function testarRequisicaoInvalida() {
+            showResult('🚫 Testando requisição inválida...');
+            try {
+                const res = await fetch('/endpoint/inexistente', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ teste: 'dados inválidos' })
+                });
+
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    showResult(`🚫 Erro esperado: HTTP ${res.status}`, true);
+                    window.logError(`Teste de requisição inválida - Status ${res.status}`, {
+                        url: '/endpoint/inexistente',
+                        response: errorText
+                    });
+                    console.log('✅ Erro capturado e logado corretamente!');
+                }
+            } catch (error) {
+                showResult(`❌ Erro: ${error.message}`, true);
+                window.logError('Erro ao testar requisição inválida', { error: error.toString() });
+            }
+        }
+
+        async function testarErroConexao() {
+            showResult('📡 Testando erro de conexão...');
+            try {
+                // Tentar conectar a um servidor inexistente
+                const res = await fetch('http://servidor-inexistente-12345.com/api');
+                showResult('⚠️ Requisição não deveria ter sucesso!', true);
+            } catch (error) {
+                showResult(`📡 Erro de conexão capturado: ${error.message}`, true);
+                window.logError('Teste de erro de conexão', {
+                    error: error.toString(),
+                    tipo: 'NetworkError',
+                    url: 'http://servidor-inexistente-12345.com/api'
+                });
+                console.log('✅ Erro de rede capturado e logado!');
+            }
+        }
+
+        // Mostrar mensagem inicial
+        console.log('🧪 Página de testes carregada!');
+        console.log('📋 Sistema de logs ativo e pronto para testes.');
+        console.log('💡 Clique nos botões para gerar diferentes tipos de logs.');
+    </script>
+</body>
+</html>
+

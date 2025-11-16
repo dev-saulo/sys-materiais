@@ -9,7 +9,6 @@ import com.keeper.sys_materiais.repository.UserRepository;
 @Service
 public class AuthService {
     @Autowired
-    @Qualifier("userRepositoryImpl")
     private UserRepository userRepo;
 
     public User login(String username, String password) {

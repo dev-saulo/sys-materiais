@@ -13,7 +13,6 @@ import java.util.List;
 @RequestMapping("/solicitacoes")
 public class SolicitacaoController {
     @Autowired
-    @Qualifier("solicitacaoRepositoryImpl")
     private SolicitacaoRepository solicitacaoRepo;
 
     @GetMapping("/list")

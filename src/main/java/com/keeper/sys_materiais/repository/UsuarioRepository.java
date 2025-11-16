@@ -1,12 +1,10 @@
 package com.keeper.sys_materiais.repository;
 
 import com.keeper.sys_materiais.model.Usuario;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.List;
 
 @Repository
-public interface UsuarioRepository {
-    List<Usuario> findAll();
-    Usuario save(Usuario usuario);
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Usuario findByMatricula(String matricula);
 }

@@ -3,27 +3,105 @@
 <head>
     <title>Usuários</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="style.css">
+    <script src="error-logger.js" defer></script>
 </head>
 <body>
 <h2>Cadastrar Usuário</h2>
-<form id="usuarioForm">
-    <input name="matricula" placeholder="Matrícula" required />
-    <input name="nome" placeholder="Nome" required />
+<form id="usuarioForm" aria-labelledby="tituloCadastro">
+    <label for="matriculaInput">Matrícula</label>
+    <input id="matriculaInput" name="matricula" maxlength="10" placeholder="Matrícula" required autocomplete="off" />
+    <label for="nomeInput">Nome</label>
+    <input id="nomeInput" name="nome" maxlength="100" placeholder="Nome" required autocomplete="off" />
     <button type="submit">Salvar</button>
 </form>
+<div id="mensagem" role="alert" aria-live="polite" style="margin-top:10px;color:#c00"></div>
 
 <h2>Lista de Usuários</h2>
-<table id="usuarioTable">
+<table id="usuarioTable" aria-describedby="listaUsuarios">
     <thead>
-    <tr><th>Matrícula</th><th>Nome</th><th>Status</th><th>Ações</th></tr>
+    <tr><th scope="col">Matrícula</th><th scope="col">Nome</th><th scope="col">Status</th><th scope="col">Ações</th></tr>
     </thead>
     <tbody></tbody>
 </table>
 
 <script>
+    // Definir BASE para chamadas: se não estiver na porta 9090, usar explicitamente http://localhost:9090
+    const API_BASE = (window.location.port === '9090') ? '' : 'http://localhost:9090';
+
+    // Exibe mensagem sem usar alert (menos intrusivo)
+    function showMessage(text, ok = false) {
+        const box = document.getElementById('mensagem');
+        box.style.color = ok ? '#060' : '#c00';
+        box.textContent = text;
+        if (window.logError && !ok) {
+            window.logError(text);
+        }
+    }
+
     async function carregarUsuarios() {
-        const res = await fetch('/usuarios/list');
-        const usuarios = await res.json();
-        const tbody = document.querySelector('#usuarioTable tbody');
-        tbody.innerHTML = '';
+        try {
+            const res = await fetch(`${API_BASE}/usuarios/list`);
+            if (!res.ok) {
+                throw new Error(`Falha HTTP ${res.status}`);
+            }
+            const usuarios = await res.json();
+            const tbody = document.querySelector('#usuarioTable tbody');
+            tbody.innerHTML = '';
+            usuarios.forEach(usuario => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${usuario.matricula ?? ''}</td>
+                    <td>${usuario.nome ?? ''}</td>
+                    <td>${usuario.ativo ? 'Ativo' : 'Inativo'}</td>
+                    <td><a href="detalhesUsuario.html?matricula=${encodeURIComponent(usuario.matricula)}">Ver detalhes</a></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar usuários:', error);
+            showMessage('Erro ao carregar usuários. Verifique se o servidor está rodando.', false);
+        }
+    }
+
+    document.getElementById('usuarioForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const usuario = {
+            matricula: formData.get('matricula')?.trim(),
+            nome: formData.get('nome')?.trim()
+        };
+        // Validação simples no front
+        if (!usuario.matricula || !usuario.nome) {
+            showMessage('Preencha todos os campos.', false);
+            return;
+        }
+        try {
+            const res = await fetch(`${API_BASE}/usuarios/add`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(usuario)
+            });
+            if (res.ok) {
+                showMessage('Usuário cadastrado com sucesso!', true);
+                e.target.reset();
+                carregarUsuarios();
+            } else {
+                const errorText = await res.text();
+                console.error('Erro ao cadastrar usuário:', res.status, errorText);
+                showMessage(`Erro ao cadastrar usuário (HTTP ${res.status}).`, false);
+                if (window.logError) {
+                    window.logError('Erro ao cadastrar usuário', { status: res.status, response: errorText, usuario });
+                }
+            }
+        } catch (error) {
+            console.error('Falha na requisição:', error);
+            showMessage('Falha ao conectar com o servidor. Verifique se está rodando.', false);
+        }
+    });
+
+    carregarUsuarios();
+</script>
+</body>
+</html>

@@ -21,10 +21,10 @@ public class Item {
     @Column(name = "COD_StatusITE")
     private Boolean ativo;
 
-    @Column(name = "DAT_CadastroITE", updatable = false)
+    @Column(name = "DAT_CadastroITE", updatable = false, insertable = false, columnDefinition = "datetime DEFAULT current_timestamp()")
     private LocalDateTime dataCadastro;
 
-    @Column(name = "DAT_AlteracaoITE")
+    @Column(name = "DAT_AlteracaoITE", insertable = false, columnDefinition = "datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()")
     private LocalDateTime dataAlteracao;
 
     // Construtores
@@ -54,16 +54,4 @@ public class Item {
 
     public LocalDateTime getDataAlteracao() { return dataAlteracao; }
     public void setDataAlteracao(LocalDateTime dataAlteracao) { this.dataAlteracao = dataAlteracao; }
-
-    // Hooks JPA para preencher datas automaticamente
-    @PrePersist
-    protected void onCreate() {
-        this.dataCadastro = LocalDateTime.now();
-        this.dataAlteracao = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.dataAlteracao = LocalDateTime.now();
-    }
 }

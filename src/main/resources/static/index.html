@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo - Sistema de Materiais</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 50px;
+            max-width: 800px;
+            width: 100%;
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        .success-message {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .success-message h2 {
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+        .success-message p {
+            color: #155724;
+            font-size: 1.1em;
+        }
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .nav-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .nav-btn .icon {
+            font-size: 2em;
+        }
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .info-box li {
+            padding: 5px 0;
+            color: #555;
+        }
+        .info-box li:before {
+            content: "✅ ";
+            color: #28a745;
+            font-weight: bold;
+        }
+        .current-url {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .current-url strong {
+            color: #856404;
+            font-size: 1.2em;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 Sistema Funcionando!</h1>
+        <p class="subtitle">Bem-vindo ao Sistema de Materiais</p>
+
+        <div class="success-message">
+            <h2>✅ Tudo Certo!</h2>
+            <p>O sistema está rodando corretamente e pronto para uso.</p>
+        </div>
+
+        <div class="current-url">
+            <strong>📍 URL Atual:</strong>
+            <div id="currentUrl" style="margin-top: 10px; font-family: monospace; font-size: 1.1em;"></div>
+        </div>
+
+        <h3 style="margin-bottom: 15px; color: #667eea; text-align: center;">Escolha uma opção:</h3>
+
+        <div class="nav-buttons">
+            <a href="/usuarios.html" class="nav-btn">
+                <span class="icon">👥</span>
+                <span>Usuários</span>
+            </a>
+            <a href="/home.html" class="nav-btn">
+                <span class="icon">🏠</span>
+                <span>Home</span>
+            </a>
+            <a href="/login.html" class="nav-btn">
+                <span class="icon">🔐</span>
+                <span>Login</span>
+            </a>
+            <a href="/teste-logs.html" class="nav-btn">
+                <span class="icon">🧪</span>
+                <span>Teste Logs</span>
+            </a>
+        </div>
+
+        <div class="info-box">
+            <h3>📋 Status do Sistema:</h3>
+            <ul>
+                <li>Servidor Spring Boot ativo na porta 9090</li>
+                <li>Banco de dados conectado e funcionando</li>
+                <li>Sistema de logs implementado</li>
+                <li>APIs REST funcionando corretamente</li>
+                <li>Frontend carregado com sucesso</li>
+            </ul>
+        </div>
+
+        <div class="info-box" style="border-left-color: #ffc107; background: #fff3cd;">
+            <h3 style="color: #856404;">⚠️ Importante:</h3>
+            <ul style="list-style: disc; padding-left: 20px;">
+                <li style="color: #856404;">Sempre use a porta <strong>9090</strong> (Spring Boot)</li>
+                <li style="color: #856404;">NÃO use a porta <strong>63342</strong> (IntelliJ)</li>
+                <li style="color: #856404;">URL correta: <code>http://localhost:9090/...</code></li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <p>Sistema de Materiais v1.0</p>
+            <p style="font-size: 0.9em; margin-top: 5px;">Desenvolvido com Spring Boot + Java 21</p>
+        </div>
+    </div>
+
+    <script>
+        // Mostrar URL atual
+        document.getElementById('currentUrl').textContent = window.location.href;
+
+        // Verificar se está na porta correta
+        if (window.location.port !== '9090') {
+            document.querySelector('.current-url').style.background = '#f8d7da';
+            document.querySelector('.current-url').style.borderColor = '#dc3545';
+            document.querySelector('.current-url strong').style.color = '#721c24';
+            document.querySelector('.current-url strong').innerHTML = '⚠️ ATENÇÃO - URL INCORRETA!';
+
+            const warning = document.createElement('div');
+            warning.style.cssText = 'background: #f8d7da; border: 2px solid #dc3545; border-radius: 10px; padding: 20px; margin-top: 20px; text-align: center;';
+            warning.innerHTML = `
+                <h3 style="color: #dc3545; margin-bottom: 10px;">❌ Você está na porta errada!</h3>
+                <p style="color: #721c24; margin-bottom: 15px;">Acesse: <strong>http://localhost:9090/</strong></p>
+                <button onclick="window.location.href='http://localhost:9090/'" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1.1em;">
+                    ✅ Ir para URL Correta
+                </button>
+            `;
+            document.querySelector('.container').insertBefore(warning, document.querySelector('.nav-buttons'));
+        }
+
+        console.log('🎉 Sistema carregado com sucesso!');
+        console.log('📍 URL atual:', window.location.href);
+        console.log('🔧 Porta:', window.location.port);
+    </script>
+</body>
+</html>
+

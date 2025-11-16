@@ -3,57 +3,94 @@
 <head>
     <title>Cadastrar Itens</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="style.css">
+    <script src="error-logger.js" defer></script>
 </head>
 <body>
 <h2>Cadastrar Item</h2>
 <form id="itemForm">
-    <input name="codigo" placeholder="Código" required />
-    <input name="nome" placeholder="Nome do Item" required />
-    <input name="cadastradoPor" placeholder="Cadastrado por" required />
+    <label for="nomeInput">Nome do Item</label>
+    <input id="nomeInput" name="nome" placeholder="Nome do Item" maxlength="150" required />
+    <label for="userInput">Cadastrado por</label>
+    <input id="userInput" name="cadastradoPor" placeholder="Cadastrado por" maxlength="100" required />
     <button type="submit">Salvar</button>
 </form>
+<div id="mensagem" role="alert" aria-live="polite" style="margin-top:10px;color:#c00"></div>
 
 <h2>Itens Cadastrados</h2>
 <table id="itemTable">
     <thead>
-    <tr><th>Código</th><th>Nome</th><th>Cadastrado Por</th><th>Ações</th></tr>
+    <tr><th>ID</th><th>Nome</th><th>Cadastrado Por</th><th>Status</th><th>Ações</th></tr>
     </thead>
     <tbody></tbody>
 </table>
 
 <script>
-    async function carregarItens() {
-        const res = await fetch('/itens/list');
-        const itens = await res.json();
-        const tbody = document.querySelector('#itemTable tbody');
-        tbody.innerHTML = '';
-        itens.forEach(item => {
-            tbody.innerHTML += `<tr>
-          <td>${item.codigo}</td>
-          <td>${item.nome}</td>
-          <td>${item.cadastradoPor}</td>
-          <td><a href="detalhesItem.html?id=${item.id}">Detalhes</a></td>
-        </tr>`;
-        });
+    const API_BASE = (window.location.port === '9090') ? '' : 'http://localhost:9090';
+
+    function showMessage(text, ok = false) {
+        const box = document.getElementById('mensagem');
+        box.style.color = ok ? '#060' : '#c00';
+        box.textContent = text;
+        if (window.logError && !ok) window.logError(text);
     }
 
-    document.getElementById('itemForm').addEventListener('submit', async evt => {
+    async function carregarItens() {
+        try {
+            const res = await fetch(`${API_BASE}/itens/list`);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const itens = await res.json();
+            const tbody = document.querySelector('#itemTable tbody');
+            tbody.innerHTML = '';
+            itens.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.id ?? ''}</td>
+                    <td>${item.nome ?? ''}</td>
+                    <td>${item.cadastradoPor ?? ''}</td>
+                    <td>${item.ativo ? 'Ativo' : 'Inativo'}</td>
+                    <td><a href="detalhesItem.html?id=${encodeURIComponent(item.id)}">Detalhes</a></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (err) {
+            console.error('Erro ao carregar itens:', err);
+            showMessage('Erro ao carregar itens. Verifique se o servidor está rodando.');
+        }
+    }
+
+    document.getElementById('itemForm').addEventListener('submit', async (evt) => {
         evt.preventDefault();
         const form = evt.target;
         const item = {
-            codigo: form.codigo.value,
-            nome: form.nome.value,
-            cadastradoPor: form.cadastradoPor.value,
+            nome: form.nome.value?.trim(),
+            cadastradoPor: form.cadastradoPor.value?.trim(),
             ativo: true
         };
-        await fetch('/itens/add', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(item)
-        });
-        carregarItens();
-        form.reset();
+        if (!item.nome || !item.cadastradoPor) {
+            showMessage('Preencha todos os campos.');
+            return;
+        }
+        try {
+            const res = await fetch(`${API_BASE}/itens/add`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(item)
+            });
+            if (res.ok) {
+                showMessage('Item cadastrado com sucesso!', true);
+                form.reset();
+                carregarItens();
+            } else {
+                const text = await res.text();
+                console.error('Erro ao cadastrar item:', res.status, text);
+                showMessage(`Erro ao cadastrar item (HTTP ${res.status}).`);
+            }
+        } catch (err) {
+            console.error('Falha ao cadastrar item:', err);
+            showMessage('Falha ao conectar com o servidor.');
+        }
     });
 
     carregarItens();

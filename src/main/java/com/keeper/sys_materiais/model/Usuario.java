@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "UsuarioUSU")
+@Table(name = "Tb_usuarios")
 public class Usuario {
 
     @Id
@@ -21,13 +21,12 @@ public class Usuario {
     @Column(name = "COD_StatusUSU")
     private Boolean ativo;
 
-    @Column(name = "DAT_CadastroUSU", updatable = false)
+    @Column(name = "DAT_CadastroUSU", updatable = false, insertable = false, columnDefinition = "datetime DEFAULT current_timestamp()")
     private LocalDateTime dataCadastro;
 
-    @Column(name = "DAT_AlteracaoUSU")
+    @Column(name = "DAT_AlteracaoUSU", insertable = false, columnDefinition = "datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()")
     private LocalDateTime dataAlteracao;
 
-    // Construtores
     public Usuario() {}
 
     public Usuario(String nome, String matricula, Boolean ativo) {
@@ -36,34 +35,16 @@ public class Usuario {
         this.ativo = ativo;
     }
 
-    // Getters e Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
-
     public String getMatricula() { return matricula; }
     public void setMatricula(String matricula) { this.matricula = matricula; }
-
     public Boolean getAtivo() { return ativo; }
     public void setAtivo(Boolean ativo) { this.ativo = ativo; }
-
     public LocalDateTime getDataCadastro() { return dataCadastro; }
     public void setDataCadastro(LocalDateTime dataCadastro) { this.dataCadastro = dataCadastro; }
-
     public LocalDateTime getDataAlteracao() { return dataAlteracao; }
     public void setDataAlteracao(LocalDateTime dataAlteracao) { this.dataAlteracao = dataAlteracao; }
-
-    // Hooks JPA para preencher datas automaticamente
-    @PrePersist
-    protected void onCreate() {
-        this.dataCadastro = LocalDateTime.now();
-        this.dataAlteracao = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.dataAlteracao = LocalDateTime.now();
-    }
 }

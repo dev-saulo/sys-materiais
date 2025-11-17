@@ -140,7 +140,7 @@ sys-materiais/
 
 5. **Acesse a aplicação**
    - URL: `http://localhost:9090`
-   - Login: `http://localhost:9090/login.html`
+   - Home: `http://localhost:9090/home.html`
 
 ## 📊 Endpoints da API
 

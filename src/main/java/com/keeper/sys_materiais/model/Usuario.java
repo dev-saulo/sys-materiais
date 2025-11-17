@@ -24,7 +24,7 @@ public class Usuario {
     @Column(name = "DAT_CadastroUSU", updatable = false, insertable = false, columnDefinition = "datetime DEFAULT current_timestamp()")
     private LocalDateTime dataCadastro;
 
-    @Column(name = "DAT_AlteracaoUSU", insertable = false, columnDefinition = "datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()")
+    @Column(name = "DAT_AlteracaoUSU", updatable = false, insertable = false, columnDefinition = "datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()")
     private LocalDateTime dataAlteracao;
 
     public Usuario() {}

@@ -1,9 +1,12 @@
 package com.keeper.sys_materiais.controller;
 
 import com.keeper.sys_materiais.service.LogService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 import com.keeper.sys_materiais.model.Usuario;
 import com.keeper.sys_materiais.repository.UsuarioRepository;
 import java.util.List;
@@ -16,6 +19,9 @@ public class UsuarioController {
 
     @Autowired
     private LogService logService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @GetMapping("/list")
     public ResponseEntity<List<Usuario>> getAllUsuarios() {
@@ -63,6 +69,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
+    @Transactional
     public ResponseEntity<Usuario> updateUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
         try {
             logService.info("Atualizando usuário com ID: " + id);
@@ -72,9 +79,14 @@ public class UsuarioController {
             }
 
             usuario.setId(id);
-            Usuario updatedUsuario = usuarioRepo.save(usuario);
+            Usuario savedUsuario = usuarioRepo.save(usuario);
+
+            // Força o flush das mudanças para o banco e recarrega as colunas gerenciadas pelo banco
+            entityManager.flush();
+            entityManager.refresh(savedUsuario);
+
             logService.info("✅ Usuário atualizado com sucesso - ID: " + id);
-            return ResponseEntity.ok(updatedUsuario);
+            return ResponseEntity.ok(savedUsuario);
         } catch (Exception e) {
             logService.error("Erro ao atualizar usuário com ID: " + id, e);
             throw e;

@@ -30,11 +30,7 @@
         <label>Status</label>
         <div class="status-container">
             <span id="statusBadge" class="badge badge-ativo">Ativo</span>
-
-            <label class="switch">
-                <input type="checkbox" id="ativoInput" name="ativo">
-                <span class="slider round"></span>
-            </label>
+            <input type="checkbox" id="ativoInput" name="ativo" style="display: none;">
         </div>
 
         <label for="dataCadastro">Cadastro</label>
@@ -73,7 +69,6 @@
         setTimeout(() => { msgBox.textContent = ''; msgBox.className = ''; }, 5000);
     }
 
-    // Atualiza o visual do Badge e do Botão auxiliar baseado no Checkbox
     function atualizarInterfaceStatus() {
         const isAtivo = ativoInput.checked;
 
@@ -118,7 +113,6 @@
             form.matricula.value = usuarioAtual.matricula ?? '';
             form.nome.value = usuarioAtual.nome ?? '';
 
-            // Define o estado do checkbox
             ativoInput.checked = !!usuarioAtual.ativo;
 
             document.getElementById('dataCadastro').value = usuarioAtual.dataCadastro ? formatarData(usuarioAtual.dataCadastro) : '-';
@@ -144,33 +138,39 @@
         };
 
         try {
-            const res = await fetch(`${API_BASE}/usuarios/add`, {
-                method: 'POST',
+            const res = await fetch(`${API_BASE}/usuarios/${usuarioAtual.id}`, {
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
             if (res.ok) {
+                const usuarioAtualizado = await res.json();
                 showMessage('Salvo com sucesso!', true);
-                document.getElementById('dataAlteracao').value = formatarData(new Date().toISOString());
+
+                usuarioAtual = usuarioAtualizado;
+
+                form.nome.value = usuarioAtualizado.nome ?? '';
+                ativoInput.checked = !!usuarioAtualizado.ativo;
+                document.getElementById('dataCadastro').value = usuarioAtualizado.dataCadastro ? formatarData(usuarioAtualizado.dataCadastro) : '-';
+                document.getElementById('dataAlteracao').value = usuarioAtualizado.dataAlteracao ? formatarData(usuarioAtualizado.dataAlteracao) : '-';
+
+                atualizarInterfaceStatus();
             } else {
-                showMessage('Erro ao salvar.', false);
+                const errorText = await res.text();
+                console.error('Erro ao salvar:', errorText);
+                showMessage('Erro ao salvar: ' + (errorText || 'Erro desconhecido'), false);
             }
         } catch (err) {
-            showMessage('Erro de conexão.', false);
+            console.error('Erro de conexão:', err);
+            showMessage('Erro de conexão: ' + err.message, false);
         }
     });
 
-    // O botão "Desativar/Reativar" apenas muda o checkbox visualmente
     toggleActionBtn.addEventListener('click', () => {
         ativoInput.checked = !ativoInput.checked;
         atualizarInterfaceStatus();
-        // Opcional: Salvar automaticamente ao clicar neste botão
-        // form.requestSubmit();
     });
-
-    // Se clicar no toggle switch direto, atualiza a interface
-    ativoInput.addEventListener('change', atualizarInterfaceStatus);
 
     document.getElementById('voltarBtn').addEventListener('click', () => {
         window.location.href = 'usuarios.html';

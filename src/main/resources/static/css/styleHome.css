@@ -1,8 +1,7 @@
-/* ===== Fundo degradê azul → branco ===== */
 body {
     margin: 0;
     padding: 0;
-    font-family: "Comic Sans MS", "Segoe Print", cursive;
+    font-family: "Open Sans", sans-serif;
     background: linear-gradient(135deg, #3b82f6 0%, #ffffff 70%);
     height: 100vh;
 
@@ -11,7 +10,6 @@ body {
     align-items: center;
 }
 
-/* ===== Caixa central com bordas curvadas estilo sketch ===== */
 .container {
     width: 90%;
     max-width: 900px;
@@ -25,14 +23,12 @@ body {
     align-items: center;
 }
 
-/* ===== Título ===== */
 h1 {
     font-size: 22px;
     margin-bottom: 40px;
     color: #1e3a8a;
 }
 
-/* ===== Menu ===== */
 nav {
     display: flex;
     gap: 20px;
@@ -47,7 +43,6 @@ nav a {
     transition: 0.2s ease-in-out;
 }
 
-/* Hover com azul e laranja */
 nav a:hover {
     background: #f97316;
     color: white;

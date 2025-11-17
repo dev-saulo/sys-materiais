@@ -1,12 +1,7 @@
-/* =========================================
-   1. ESTRUTURA GERAL (Identidade Visual)
-   ========================================= */
 body {
     margin: 0;
     padding: 20px;
-    /* Fonte "Sketch" conforme seu print */
-    font-family: "Comic Sans MS", "Segoe Print", cursive;
-    /* Fundo degradê azul */
+    font-family: "Open Sans", sans-serif;
     background: linear-gradient(135deg, #3b82f6 0%, #ffffff 70%);
     min-height: 100vh;
     box-sizing: border-box;
@@ -16,12 +11,10 @@ body {
     gap: 20px;
 }
 
-/* ===== Estilos do Menu (Seu estilo) ===== */
 nav {
     display: flex;
     gap: 20px;
 
-    /* Estilos para combinar com o container */
     background: rgba(255, 255, 255, 0.7);
     padding: 15px 30px;
     border-radius: 12px;
@@ -38,20 +31,17 @@ nav a {
     font-weight: bold;
 }
 
-/* Hover com azul e laranja (Seu estilo) */
 nav a:hover {
     background: #f97316;
     color: white;
 }
-/* =========================================
-   3. CONTAINER PRINCIPAL
-   ========================================= */
+
 .container {
     width: 90%;
     max-width: 900px;
     padding: 30px;
     background: #ffffff;
-    border-radius: 20px; /* Bordas bem arredondadas */
+    border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
@@ -66,12 +56,9 @@ h2 {
     margin-bottom: 20px;
 }
 
-/* =========================================
-   4. FORMULÁRIO (Layout Grid)
-   ========================================= */
 form {
     display: grid;
-    grid-template-columns: 130px 1fr; /* Label fixo, Input estica */
+    grid-template-columns: 130px 1fr;
     gap: 15px;
     align-items: center;
 }
@@ -86,8 +73,8 @@ form label {
 form input {
     width: 100%;
     padding: 12px;
-    border: 2px solid #cbd5e1; /* Borda cinza azulada */
-    border-radius: 10px; /* Inputs arredondados */
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
     font-family: inherit;
     font-size: 14px;
     box-sizing: border-box;
@@ -100,23 +87,19 @@ form input:focus {
     background-color: #fff;
 }
 
-/* Inputs somente leitura (Cinza claro) */
 form input[readonly] {
     background-color: #e2e8f0;
     color: #64748b;
     border-color: #cbd5e1;
 }
 
-/* =========================================
-   5. NOVOS ELEMENTOS: BADGE & SWITCH
-   ========================================= */
+
 .status-container {
     display: flex;
     align-items: center;
     gap: 15px;
 }
 
-/* A Etiqueta (Badge) Arredondada */
 .badge {
     padding: 6px 16px;
     border-radius: 20px;
@@ -126,10 +109,9 @@ form input[readonly] {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.badge-ativo { background-color: #10b981; } /* Verde */
-.badge-inativo { background-color: #ef4444; } /* Vermelho */
+.badge-ativo { background-color: #10b981; }
+.badge-inativo { background-color: #ef4444; }
 
-/* O Toggle Switch (Botão de deslizar) */
 .switch {
     position: relative;
     display: inline-block;
@@ -159,21 +141,19 @@ form input[readonly] {
 input:checked + .slider { background-color: #10b981; }
 input:checked + .slider:before { transform: translateX(22px); }
 
-/* =========================================
-   6. BOTÕES (Menores e Lado a Lado)
-   ========================================= */
+
 .form-actions {
-    grid-column: 1 / -1; /* Ocupa largura total */
+    grid-column: 1 / -1;
     display: flex;
-    justify-content: center; /* Centraliza os botões */
+    justify-content: center;
     gap: 15px;
     margin-top: 20px;
     padding-top: 20px;
-    border-top: 2px dashed #e2e8f0; /* Linha pontilhada separando */
+    border-top: 2px dashed #e2e8f0;
 }
 
 button {
-    padding: 10px 20px; /* Menor que o original */
+    padding: 10px 20px;
     border: none;
     border-radius: 10px;
     color: white;
@@ -194,22 +174,19 @@ button:active {
     transform: translateY(0);
 }
 
-/* Cores dos Botões */
-.btn-primary { background-color: #f97316; } /* Laranja (Padrão) */
+.btn-primary { background-color: #f97316; }
 .btn-primary:hover { background-color: #ea580c; }
 
-.btn-danger { background-color: #ef4444; } /* Vermelho (Desativar) */
+.btn-danger { background-color: #ef4444; }
 .btn-danger:hover { background-color: #dc2626; }
 
-.btn-success { background-color: #10b981; } /* Verde (Reativar) */
+.btn-success { background-color: #10b981; }
 .btn-success:hover { background-color: #059669; }
 
-.btn-secondary { background-color: #64748b; } /* Cinza (Voltar) */
+.btn-secondary { background-color: #64748b; }
 .btn-secondary:hover { background-color: #475569; }
 
-/* =========================================
-   7. MENSAGENS E TABELAS (Suporte Global)
-   ========================================= */
+
 #mensagem {
     text-align: center;
     font-weight: bold;
@@ -218,7 +195,6 @@ button:active {
 .msg-success { color: #16a34a; }
 .msg-error { color: #dc2626; }
 
-/* Estilos para tabelas (páginas de listagem) */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -227,7 +203,7 @@ table {
     overflow: hidden;
 }
 th {
-    background-color: #dbeafe; /* Azul claro */
+    background-color: #dbeafe;
     color: #1e3a8a;
     padding: 12px;
     text-align: left;
@@ -238,7 +214,6 @@ td {
 }
 tr:hover { background-color: #f1f5f9; }
 
-/* Checkbox lista (Solicitar Material) */
 .checkbox-item {
     display: flex;
     align-items: center;

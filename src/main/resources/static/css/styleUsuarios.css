@@ -1,25 +1,21 @@
-/* ===== Fundo e Fonte (Seu estilo) ===== */
 body {
     margin: 0;
     padding: 20px;
-    font-family: "Comic Sans MS", "Segoe Print", cursive;
+    font-family: "Open Sans", sans-serif;
     background: linear-gradient(135deg, #3b82f6 0%, #ffffff 70%);
     min-height: 100vh;
     box-sizing: border-box;
 
-    /* Organiza o nav e o container em coluna, centralizados */
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px; /* Espaço entre o nav e o container */
+    gap: 20px;
 }
 
-/* ===== Estilos do Menu (Seu estilo) ===== */
 nav {
     display: flex;
     gap: 20px;
 
-    /* Estilos para combinar com o container */
     background: rgba(255, 255, 255, 0.7);
     padding: 15px 30px;
     border-radius: 12px;
@@ -36,28 +32,25 @@ nav a {
     font-weight: bold;
 }
 
-/* Hover com azul e laranja (Seu estilo) */
 nav a:hover {
     background: #f97316;
     color: white;
 }
 
-/* ===== Caixa central ===== */
 .container {
     width: 90%;
     max-width: 900px;
     padding: 30px;
     display: flex;
-    flex-direction: column; /* Organiza os filhos verticalmente */
-    align-items: stretch;  /* Faz os filhos ocuparem a largura total */
-    gap: 20px; /* Espaçamento entre os elementos */
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
 
     background: rgba(255, 255, 255, 0.7);
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* ===== Título ===== */
 h2 {
     font-size: 24px;
     margin: 0 0 10px 0;
@@ -65,10 +58,8 @@ h2 {
     text-align: center;
 }
 
-/* ===== Estilos do Formulário ===== */
 form {
     display: grid;
-    /* Cria um grid para alinhar labels e inputs */
     grid-template-columns: auto 1fr;
     gap: 12px;
     align-items: center;
@@ -86,14 +77,13 @@ form input {
     border-radius: 8px;
     font-family: inherit;
     font-size: 14px;
-    box-sizing: border-box; /* Garante que o padding não quebre o layout */
+    box-sizing: border-box;
 }
 
 form button {
-    /* Faz o botão ocupar as duas colunas do grid */
     grid-column: 1 / -1;
     padding: 12px;
-    background-color: #f97316; /* Cor laranja do seu estilo 'nav' */
+    background-color: #f97316;
     color: white;
     border: none;
     border-radius: 8px;
@@ -105,24 +95,22 @@ form button {
 }
 
 form button:hover {
-    background-color: #ea580c; /* Laranja mais escuro */
+    background-color: #ea580c;
 }
 
-/* Mensagem de erro/sucesso */
 #mensagem {
     text-align: center;
     font-weight: bold;
     font-size: 16px;
-    min-height: 1.2em; /* Reserva espaço para a mensagem */
+    min-height: 1.2em;
 }
 
-/* ===== Estilos da Tabela ===== */
 table {
     width: 100%;
     border-collapse: collapse;
     background: #ffffff;
     border-radius: 8px;
-    overflow: hidden; /* Para o border-radius funcionar no cabeçalho */
+    overflow: hidden;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
@@ -133,7 +121,7 @@ th, td {
 }
 
 th {
-    background-color: #e0e7ff; /* Azul claro */
+    background-color: #e0e7ff;
     color: #1e3a8a;
     font-size: 14px;
 }
@@ -143,7 +131,7 @@ tbody tr:last-child td {
 }
 
 tbody tr:hover {
-    background-color: #f4f4f5; /* Cinza claro no hover */
+    background-color: #f4f4f5;
 }
 
 table a {

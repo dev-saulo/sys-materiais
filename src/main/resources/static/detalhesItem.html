@@ -19,7 +19,7 @@
 
     <h2>Editar Item</h2>
 
-    <form id="editForm">
+    <form id="editForm" name="editForm">
 
         <label for="codigoInput">Código</label>
         <input id="codigoInput" name="codigo" placeholder="Código" readonly />
@@ -72,39 +72,86 @@
     }
 
     async function carregarItem() {
+        const debugInfo = document.getElementById('debugInfo');
+        const debugText = document.getElementById('debugText');
+        debugInfo.style.display = 'block';
+
         if (!id) {
+            debugText.textContent = '❌ ID não informado na URL';
             showMessage('ID do item não informado', false);
             return;
         }
 
         try {
-            const res = await fetch(`/itens/list`);
-            if (!res.ok) throw new Error('Erro ao carregar itens');
+            debugText.textContent = `Carregando item ID: ${id}...`;
+            console.log('Carregando item com ID:', id);
+
+            const baseUrl = window.location.origin;
+            const cacheBuster = '?_=' + new Date().getTime();
+            const url = `${baseUrl}/itens/list${cacheBuster}`;
+
+            debugText.textContent = `Conectando: ${url}`;
+            console.log('URL completa:', url);
+
+            const res = await fetch(url);
+            debugText.textContent = `Resposta recebida: Status ${res.status}`;
+            console.log('Status da resposta:', res.status);
+
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
             const itens = await res.json();
+            debugText.textContent = `✅ Recebido ${itens.length} itens`;
+            console.log('Itens recebidos:', itens);
+
             const item = itens.find(i => String(i.id) === String(id));
+            console.log('Item encontrado:', item);
 
             if (item) {
+                debugText.textContent = `✅ Item "${item.nome}" carregado! (Ocultar em 3s)`;
+
+                // Guarda o item original completo
+                itemOriginal = item;
+
+                // Preenche o formulário
                 document.editForm.codigo.value = item.id || '';
                 document.editForm.nome.value = item.nome || '';
                 ativoInput.checked = item.ativo;
                 atualizarBadge();
+                console.log('✅ Item carregado com sucesso!');
+                console.log('Item original:', itemOriginal);
+
+                // Oculta debug após 3 segundos
+                setTimeout(() => {
+                    debugInfo.style.display = 'none';
+                }, 3000);
             } else {
+                debugText.textContent = `❌ Item ID ${id} não encontrado`;
                 showMessage('Item não encontrado', false);
             }
         } catch (err) {
-            console.error(err);
+            console.error('Erro detalhado:', err);
+            debugText.textContent = `❌ ERRO: ${err.message}`;
             showMessage('Erro ao conectar com o servidor', false);
         }
     }
+
+    let itemOriginal = null; // Guarda o item original para manter campos não editáveis
 
     document.getElementById('editForm').addEventListener('submit', async evt => {
         evt.preventDefault();
         const form = evt.target;
 
+        if (!itemOriginal) {
+            showMessage('Item não foi carregado corretamente', false);
+            return;
+        }
+
         const item = {
+            id: itemOriginal.id,
             nome: form.nome.value.trim(),
-            ativo: ativoInput.checked
+            cadastradoPor: itemOriginal.cadastradoPor, // Mantém o cadastradoPor original
+            ativo: ativoInput.checked,
+            dataCadastro: itemOriginal.dataCadastro // Mantém data de cadastro
         };
 
         if (!item.nome) {
@@ -113,7 +160,9 @@
         }
 
         try {
-            const res = await fetch(`/itens/${id}`, {
+            console.log('Salvando item ID:', id, 'Dados:', item);
+            const baseUrl = window.location.origin;
+            const res = await fetch(`${baseUrl}/itens/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(item)
@@ -121,11 +170,15 @@
 
             if (res.ok) {
                 showMessage('Item atualizado com sucesso!', true);
+                const itemAtualizado = await res.json();
+                itemOriginal = itemAtualizado; // Atualiza o item original
             } else {
+                const errorText = await res.text();
+                console.error('Erro ao atualizar:', errorText);
                 showMessage('Erro ao atualizar item', false);
             }
         } catch (err) {
-            console.error(err);
+            console.error('Erro detalhado:', err);
             showMessage('Erro de conexão', false);
         }
     });

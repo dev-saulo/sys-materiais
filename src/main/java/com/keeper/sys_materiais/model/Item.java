@@ -12,13 +12,17 @@ public class Item {
     @Column(name = "PK_COD_ItemITE")
     private Long id;
 
+    // Campo exposto na API, mas ainda não persistido no banco
+    @Transient
+    private String codigo;
+
     @Column(name = "TXT_NomeItemITE", nullable = false, length = 150)
     private String nome;
 
     @Column(name = "FK_UsuarioITE", nullable = false, length = 100)
     private String cadastradoPor;
 
-    @Column(name = "COD_StatusITE")
+    @Column(name = "COD_StatusITE", columnDefinition = "tinyint(1) DEFAULT 1")
     private Boolean ativo;
 
     @Column(name = "DAT_CadastroITE", updatable = false, insertable = false, columnDefinition = "datetime DEFAULT current_timestamp()")
@@ -39,6 +43,9 @@ public class Item {
     // Getters e Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getCodigo() { return codigo; }
+    public void setCodigo(String codigo) { this.codigo = codigo; }
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }

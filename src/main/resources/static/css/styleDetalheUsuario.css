@@ -1,0 +1,253 @@
+/* =========================================
+   1. ESTRUTURA GERAL (Identidade Visual)
+   ========================================= */
+body {
+    margin: 0;
+    padding: 20px;
+    /* Fonte "Sketch" conforme seu print */
+    font-family: "Comic Sans MS", "Segoe Print", cursive;
+    /* Fundo degradê azul */
+    background: linear-gradient(135deg, #3b82f6 0%, #ffffff 70%);
+    min-height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* ===== Estilos do Menu (Seu estilo) ===== */
+nav {
+    display: flex;
+    gap: 20px;
+
+    /* Estilos para combinar com o container */
+    background: rgba(255, 255, 255, 0.7);
+    padding: 15px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+nav a {
+    text-decoration: none;
+    font-size: 18px;
+    color: #0f172a;
+    padding: 5px 10px;
+    border-radius: 8px;
+    transition: 0.2s ease-in-out;
+    font-weight: bold;
+}
+
+/* Hover com azul e laranja (Seu estilo) */
+nav a:hover {
+    background: #f97316;
+    color: white;
+}
+/* =========================================
+   3. CONTAINER PRINCIPAL
+   ========================================= */
+.container {
+    width: 90%;
+    max-width: 900px;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 20px; /* Bordas bem arredondadas */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+h2 {
+    font-size: 28px;
+    color: #1e3a8a;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+/* =========================================
+   4. FORMULÁRIO (Layout Grid)
+   ========================================= */
+form {
+    display: grid;
+    grid-template-columns: 130px 1fr; /* Label fixo, Input estica */
+    gap: 15px;
+    align-items: center;
+}
+
+form label {
+    font-weight: bold;
+    color: #1e3a8a;
+    text-align: right;
+    padding-right: 10px;
+}
+
+form input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #cbd5e1; /* Borda cinza azulada */
+    border-radius: 10px; /* Inputs arredondados */
+    font-family: inherit;
+    font-size: 14px;
+    box-sizing: border-box;
+    background-color: #f8fafc;
+    outline: none;
+}
+
+form input:focus {
+    border-color: #3b82f6;
+    background-color: #fff;
+}
+
+/* Inputs somente leitura (Cinza claro) */
+form input[readonly] {
+    background-color: #e2e8f0;
+    color: #64748b;
+    border-color: #cbd5e1;
+}
+
+/* =========================================
+   5. NOVOS ELEMENTOS: BADGE & SWITCH
+   ========================================= */
+.status-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* A Etiqueta (Badge) Arredondada */
+.badge {
+    padding: 6px 16px;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.badge-ativo { background-color: #10b981; } /* Verde */
+.badge-inativo { background-color: #ef4444; } /* Vermelho */
+
+/* O Toggle Switch (Botão de deslizar) */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 24px;
+}
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #cbd5e1;
+    transition: .4s;
+    border-radius: 34px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider { background-color: #10b981; }
+input:checked + .slider:before { transform: translateX(22px); }
+
+/* =========================================
+   6. BOTÕES (Menores e Lado a Lado)
+   ========================================= */
+.form-actions {
+    grid-column: 1 / -1; /* Ocupa largura total */
+    display: flex;
+    justify-content: center; /* Centraliza os botões */
+    gap: 15px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px dashed #e2e8f0; /* Linha pontilhada separando */
+}
+
+button {
+    padding: 10px 20px; /* Menor que o original */
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.2s;
+    min-width: 120px;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Cores dos Botões */
+.btn-primary { background-color: #f97316; } /* Laranja (Padrão) */
+.btn-primary:hover { background-color: #ea580c; }
+
+.btn-danger { background-color: #ef4444; } /* Vermelho (Desativar) */
+.btn-danger:hover { background-color: #dc2626; }
+
+.btn-success { background-color: #10b981; } /* Verde (Reativar) */
+.btn-success:hover { background-color: #059669; }
+
+.btn-secondary { background-color: #64748b; } /* Cinza (Voltar) */
+.btn-secondary:hover { background-color: #475569; }
+
+/* =========================================
+   7. MENSAGENS E TABELAS (Suporte Global)
+   ========================================= */
+#mensagem {
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+}
+.msg-success { color: #16a34a; }
+.msg-error { color: #dc2626; }
+
+/* Estilos para tabelas (páginas de listagem) */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+th {
+    background-color: #dbeafe; /* Azul claro */
+    color: #1e3a8a;
+    padding: 12px;
+    text-align: left;
+}
+td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+tr:hover { background-color: #f1f5f9; }
+
+/* Checkbox lista (Solicitar Material) */
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}

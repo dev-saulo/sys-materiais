@@ -1,11 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
+    <title>Detalhes do Usuário</title>
     <meta charset="UTF-8">
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="css/styleDetalheUsuario.css">
+    <script src="error-logger.js" defer></script>
 </head>
 <body>
 
+<nav>
+    <a href="cadastraritem.html">Cadastrar Itens</a>
+    <a href="solicitarmaterial.html">Solicitar Materiais</a>
+    <a href="usuarios.html">Usuários</a>
+    <a href="#">Sair</a>
+</nav>
+
+<div class="container">
+    <h2>Detalhes do Usuário</h2>
+
+    <form id="usuarioDetalhesForm">
+
+        <label for="matriculaInput">Matrícula</label>
+        <input id="matriculaInput" name="matricula" readonly />
+
+        <label for="nomeInput">Nome</label>
+        <input id="nomeInput" name="nome" maxlength="100" required autocomplete="off" />
+
+        <label>Status</label>
+        <div class="status-container">
+            <span id="statusBadge" class="badge badge-ativo">Ativo</span>
+
+            <label class="switch">
+                <input type="checkbox" id="ativoInput" name="ativo">
+                <span class="slider round"></span>
+            </label>
+        </div>
+
+        <label for="dataCadastro">Cadastro</label>
+        <input id="dataCadastro" readonly />
+
+        <label for="dataAlteracao">Última Alteração</label>
+        <input id="dataAlteracao" readonly />
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            <button type="button" id="toggleActionBtn" class="btn btn-danger">Desativar</button>
+            <button type="button" id="voltarBtn" class="btn btn-secondary">Voltar</button>
+        </div>
+
+    </form>
+
+    <div id="mensagem" role="alert" aria-live="polite"></div>
+</div>
+
+<script>
+    const API_BASE = '';
+    const params = new URLSearchParams(location.search);
+    const matriculaParam = params.get('matricula');
+
+    const form = document.getElementById('usuarioDetalhesForm');
+    const msgBox = document.getElementById('mensagem');
+    const statusBadge = document.getElementById('statusBadge');
+    const toggleActionBtn = document.getElementById('toggleActionBtn');
+    const ativoInput = document.getElementById('ativoInput');
+
+    let usuarioAtual = null;
+
+    function showMessage(text, ok = false) {
+        msgBox.textContent = text;
+        msgBox.className = ok ? 'msg-success' : 'msg-error';
+        setTimeout(() => { msgBox.textContent = ''; msgBox.className = ''; }, 5000);
+    }
+
+    // Atualiza o visual do Badge e do Botão auxiliar baseado no Checkbox
+    function atualizarInterfaceStatus() {
+        const isAtivo = ativoInput.checked;
+
+        // Atualiza Badge
+        if (isAtivo) {
+            statusBadge.textContent = 'Ativo';
+            statusBadge.className = 'badge badge-ativo';
+            toggleActionBtn.textContent = 'Desativar';
+            toggleActionBtn.className = 'btn btn-danger'; // Botão fica vermelho
+        } else {
+            statusBadge.textContent = 'Inativo';
+            statusBadge.className = 'badge badge-inativo';
+            toggleActionBtn.textContent = 'Reativar';
+            toggleActionBtn.className = 'btn btn-success'; // Botão fica verde
+        }
+    }
+
+    function formatarData(iso) {
+        try {
+            const d = new Date(iso);
+            if (isNaN(d)) return '-';
+            return d.toLocaleString('pt-BR');
+        } catch { return '-'; }
+    }
+
+    async function carregarUsuario() {
+        if (!matriculaParam) {
+            showMessage('Matrícula não informada.', false);
+            return;
+        }
+        try {
+            const res = await fetch(`${API_BASE}/usuarios/list`);
+            if (!res.ok) throw new Error('Erro na API');
+            const lista = await res.json();
+            usuarioAtual = lista.find(u => String(u.matricula) === String(matriculaParam));
+
+            if (!usuarioAtual) {
+                showMessage('Usuário não encontrado.', false);
+                return;
+            }
+
+            form.matricula.value = usuarioAtual.matricula ?? '';
+            form.nome.value = usuarioAtual.nome ?? '';
+
+            // Define o estado do checkbox
+            ativoInput.checked = !!usuarioAtual.ativo;
+
+            document.getElementById('dataCadastro').value = usuarioAtual.dataCadastro ? formatarData(usuarioAtual.dataCadastro) : '-';
+            document.getElementById('dataAlteracao').value = usuarioAtual.dataAlteracao ? formatarData(usuarioAtual.dataAlteracao) : '-';
+
+            atualizarInterfaceStatus();
+
+        } catch (e) {
+            console.error(e);
+            showMessage('Erro ao carregar dados.', false);
+        }
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!usuarioAtual) return;
+
+        const payload = {
+            id: usuarioAtual.id,
+            matricula: usuarioAtual.matricula,
+            nome: form.nome.value.trim(),
+            ativo: ativoInput.checked
+        };
+
+        try {
+            const res = await fetch(`${API_BASE}/usuarios/add`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                showMessage('Salvo com sucesso!', true);
+                document.getElementById('dataAlteracao').value = formatarData(new Date().toISOString());
+            } else {
+                showMessage('Erro ao salvar.', false);
+            }
+        } catch (err) {
+            showMessage('Erro de conexão.', false);
+        }
+    });
+
+    // O botão "Desativar/Reativar" apenas muda o checkbox visualmente
+    toggleActionBtn.addEventListener('click', () => {
+        ativoInput.checked = !ativoInput.checked;
+        atualizarInterfaceStatus();
+        // Opcional: Salvar automaticamente ao clicar neste botão
+        // form.requestSubmit();
+    });
+
+    // Se clicar no toggle switch direto, atualiza a interface
+    ativoInput.addEventListener('change', atualizarInterfaceStatus);
+
+    document.getElementById('voltarBtn').addEventListener('click', () => {
+        window.location.href = 'usuarios.html';
+    });
+
+    carregarUsuario();
+</script>
 </body>
 </html>

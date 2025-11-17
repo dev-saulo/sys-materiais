@@ -44,6 +44,10 @@ public class ItemController {
                 logService.warn("Tentativa de cadastro de item sem nome");
                 return ResponseEntity.badRequest().build();
             }
+            if (item.getCadastradoPor() == null || item.getCadastradoPor().isBlank()) {
+                logService.warn("Tentativa de cadastro de item sem 'cadastradoPor'");
+                return ResponseEntity.badRequest().build();
+            }
 
             Item savedItem = itemRepo.save(item);
             logService.info("✅ Item cadastrado com sucesso - ID: " + savedItem.getId() + ", Nome: " + savedItem.getNome());

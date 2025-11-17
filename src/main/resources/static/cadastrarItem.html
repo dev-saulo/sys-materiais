@@ -4,30 +4,44 @@
     <title>Cadastrar Itens</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/styleCadastrarItem.css">
     <script src="error-logger.js" defer></script>
 </head>
 <body>
-<h2>Cadastrar Item</h2>
-<form id="itemForm">
-    <label for="nomeInput">Nome do Item</label>
-    <input id="nomeInput" name="nome" placeholder="Nome do Item" maxlength="150" required />
-    <label for="userInput">Cadastrado por</label>
-    <input id="userInput" name="cadastradoPor" placeholder="Cadastrado por" maxlength="100" required />
-    <button type="submit">Salvar</button>
-</form>
-<div id="mensagem" role="alert" aria-live="polite" style="margin-top:10px;color:#c00"></div>
 
-<h2>Itens Cadastrados</h2>
-<table id="itemTable">
-    <thead>
-    <tr><th>ID</th><th>Nome</th><th>Cadastrado Por</th><th>Status</th><th>Ações</th></tr>
-    </thead>
-    <tbody></tbody>
-</table>
+<nav>
+    <a href="home.html">Início</a>
+    <a href="solicitarMaterial.html">Solicitar Materiais</a>
+    <a href="usuarios.html">Usuários</a>
+    <a href="login.html">Sair</a>
+</nav>
 
-<script>
-    const API_BASE = (window.location.port === '9090') ? '' : 'http://localhost:9090';
+<div class="container">
+
+    <h2>Cadastrar Item</h2>
+    <form id="itemForm">
+
+        <label for="nomeInput">Nome do Item</label>
+        <input id="nomeInput" name="nome" placeholder="Nome do Item" maxlength="150" required />
+
+        <label for="userInput">Cadastrado por</label>
+        <input id="userInput" name="cadastradoPor" placeholder="Cadastrado por" maxlength="100" required />
+
+        <button type="submit">Salvar</button>
+    </form>
+    <div id="mensagem" role="alert" aria-live="polite"></div>
+
+    <h2>Itens Cadastrados</h2>
+    <table id="itemTable">
+        <thead>
+        <tr><th>ID</th><th>Nome</th><th>Cadastrado Por</th><th>Status</th><th>Ações</th></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+</div><script>
+    const API_BASE = '';
 
     function showMessage(text, ok = false) {
         const box = document.getElementById('mensagem');

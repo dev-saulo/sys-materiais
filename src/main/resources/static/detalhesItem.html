@@ -3,46 +3,139 @@
 <head>
     <title>Detalhes do Item</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="css/styleDetalheItem.css">
 </head>
 <body>
-<h2>Editar Item</h2>
-<form id="editForm">
-    <input name="codigo" placeholder="Código" required />
-    <input name="nome" placeholder="Nome" required />
-    <label><input type="checkbox" name="ativo" /> Ativo</label>
-    <button type="submit">Atualizar</button>
-</form>
+
+<nav>
+    <a href="cadastrarItem.html">Cadastrar Itens</a>
+    <a href="solicitarMaterial.html">Solicitar Materiais</a>
+    <a href="usuarios.html">Usuários</a>
+    <a href="login.html">Sair</a>
+</nav>
+
+<div class="container">
+
+    <h2>Editar Item</h2>
+
+    <form id="editForm">
+
+        <label for="codigoInput">Código</label>
+        <input id="codigoInput" name="codigo" placeholder="Código" readonly />
+
+        <label for="nomeInput">Nome</label>
+        <input id="nomeInput" name="nome" placeholder="Nome" required />
+
+        <label>Status</label>
+        <div class="status-container">
+            <span id="statusBadge" class="badge badge-ativo">Ativo</span>
+            <label class="switch">
+                <input type="checkbox" id="ativoInput" name="ativo">
+                <span class="slider round"></span>
+            </label>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Salvar Alterações</button>
+            <button type="button" id="voltarBtn" class="btn-secondary">Voltar</button>
+        </div>
+
+    </form>
+
+    <div id="mensagem" role="alert" aria-live="polite" style="margin-top: 15px; text-align: center; font-weight: bold;"></div>
+
+
+</div>
 
 <script>
     const params = new URLSearchParams(location.search);
     const id = params.get('id');
+    const msgBox = document.getElementById('mensagem');
+    const statusBadge = document.getElementById('statusBadge');
+    const ativoInput = document.getElementById('ativoInput');
+
+    function showMessage(text, ok = false) {
+        msgBox.textContent = text;
+        msgBox.style.color = ok ? '#10b981' : '#ef4444';
+        setTimeout(() => { msgBox.textContent = ''; }, 5000);
+    }
+
+    function atualizarBadge() {
+        if (ativoInput.checked) {
+            statusBadge.textContent = 'Ativo';
+            statusBadge.className = 'badge badge-ativo';
+        } else {
+            statusBadge.textContent = 'Inativo';
+            statusBadge.className = 'badge badge-inativo';
+        }
+    }
 
     async function carregarItem() {
-        const res = await fetch(`/itens/list`);
-        const itens = await res.json();
-        const item = itens.find(i => i.id == id);
-        if (item) {
-            document.editForm.codigo.value = item.codigo;
-            document.editForm.nome.value = item.nome;
-            document.editForm.ativo.checked = item.ativo;
+        if (!id) {
+            showMessage('ID do item não informado', false);
+            return;
+        }
+
+        try {
+            const res = await fetch(`/itens/list`);
+            if (!res.ok) throw new Error('Erro ao carregar itens');
+
+            const itens = await res.json();
+            const item = itens.find(i => String(i.id) === String(id));
+
+            if (item) {
+                document.editForm.codigo.value = item.id || '';
+                document.editForm.nome.value = item.nome || '';
+                ativoInput.checked = item.ativo;
+                atualizarBadge();
+            } else {
+                showMessage('Item não encontrado', false);
+            }
+        } catch (err) {
+            console.error(err);
+            showMessage('Erro ao conectar com o servidor', false);
         }
     }
 
     document.getElementById('editForm').addEventListener('submit', async evt => {
         evt.preventDefault();
         const form = evt.target;
+
         const item = {
-            codigo: form.codigo.value,
-            nome: form.nome.value,
-            ativo: form.ativo.checked
+            nome: form.nome.value.trim(),
+            ativo: ativoInput.checked
         };
-        await fetch(`/itens/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(item)
-        });
-        alert('Item atualizado');
+
+        if (!item.nome) {
+            showMessage('Nome não pode estar vazio', false);
+            return;
+        }
+
+        try {
+            const res = await fetch(`/itens/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(item)
+            });
+
+            if (res.ok) {
+                showMessage('Item atualizado com sucesso!', true);
+            } else {
+                showMessage('Erro ao atualizar item', false);
+            }
+        } catch (err) {
+            console.error(err);
+            showMessage('Erro de conexão', false);
+        }
+    });
+
+    // Atualiza badge quando o switch mudar
+    ativoInput.addEventListener('change', atualizarBadge);
+
+    // Botão Voltar
+    document.getElementById('voltarBtn').addEventListener('click', () => {
+        window.location.href = 'cadastrarItem.html';
     });
 
     carregarItem();

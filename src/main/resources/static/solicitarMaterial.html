@@ -3,46 +3,129 @@
 <head>
     <title>Solicitar Material</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="css/styleSolicitarMaterial.css">
 </head>
 <body>
-<h2>Solicitar Material</h2>
-<form id="solicitacaoForm">
-    <div id="checkboxes"></div>
-    <button type="submit" id="btnSalvar" style="display:none;">Salvar</button>
-</form>
+
+<nav>
+    <a href="cadastraritem.html">Cadastrar Itens</a>
+    <a href="solicitarmaterial.html">Solicitar Materiais</a>
+    <a href="usuarios.html">Usuários</a>
+    <a href="login.html">Sair</a>
+</nav>
+
+<div class="container">
+
+    <h2>Solicitar Material</h2>
+
+    <form id="solicitacaoForm">
+        <div id="checkboxes">
+            <p style="text-align:center; color:#666;">Carregando itens...</p>
+        </div>
+
+        <button type="submit" id="btnSalvar" style="display:none;">
+            Concluir Solicitação
+        </button>
+    </form>
+
+    <div id="mensagem" style="margin-top:15px;"></div>
+
+</div>
 
 <script>
-    async function carregarItens() {
-        const res = await fetch('/itens/list');
-        const itens = await res.json();
-        const container = document.getElementById('checkboxes');
-        container.innerHTML = '';
-        itens.filter(i => i.ativo).forEach(item => {
-            container.innerHTML += `<label>
-          <input type="checkbox" value="${item.id}" /> ${item.nome}
-        </label><br>`;
-        });
+    // Função visual para mensagens (igual à outra página)
+    function showMessage(text, ok = false) {
+        const box = document.getElementById('mensagem');
+        box.style.color = ok ? '#060' : '#c00';
+        box.textContent = text;
+        box.style.textAlign = 'center';
+        box.style.fontWeight = 'bold';
+
+        // Limpa a mensagem depois de 5 segundos
+        setTimeout(() => { box.textContent = ''; }, 5000);
     }
 
+    async function carregarItens() {
+        try {
+            // Ajuste a URL se necessário (ex: /api/itens/list)
+            const res = await fetch('/itens/list');
+            if (!res.ok) throw new Error("Falha ao buscar dados");
+
+            const itens = await res.json();
+            const container = document.getElementById('checkboxes');
+            container.innerHTML = '';
+
+            const itensAtivos = itens.filter(i => i.ativo);
+
+            if (itensAtivos.length === 0) {
+                container.innerHTML = '<p style="text-align:center">Nenhum material disponível para solicitação.</p>';
+                return;
+            }
+
+            itensAtivos.forEach(item => {
+                // Criamos a div .checkbox-item
+                const div = document.createElement('div');
+                div.className = 'checkbox-item';
+
+                // HTML interno do cartão
+                div.innerHTML = `
+                    <input type="checkbox" id="item_${item.id}" value="${item.id}" />
+                    <label for="item_${item.id}">${item.nome}</label>
+                `;
+                container.appendChild(div);
+            });
+
+        } catch (error) {
+            console.error(error);
+            document.getElementById('checkboxes').innerHTML = '<p style="color:red; text-align:center">Erro ao carregar itens do servidor.</p>';
+        }
+    }
+
+    // Lógica para mostrar o botão apenas quando algo for selecionado
     document.getElementById('checkboxes').addEventListener('change', () => {
         const checked = document.querySelectorAll('#checkboxes input:checked');
-        document.getElementById('btnSalvar').style.display = checked.length > 0 ? 'inline' : 'none';
+        const btn = document.getElementById('btnSalvar');
+
+        if (checked.length > 0) {
+            btn.style.display = 'block';
+        } else {
+            btn.style.display = 'none';
+        }
     });
 
+    // Envio do formulário
     document.getElementById('solicitacaoForm').addEventListener('submit', async evt => {
         evt.preventDefault();
-        const ids = Array.from(document.querySelectorAll('#checkboxes input:checked')).map(cb => parseInt(cb.value));
+
+        const ids = Array.from(document.querySelectorAll('#checkboxes input:checked'))
+            .map(cb => parseInt(cb.value));
+
         const solicitacao = {
-            solicitante: 'usuario', // pode ser dinâmico
+            solicitante: 'usuario_padrao', // Aqui futuramente você coloca o user da sessão
             itensIds: ids
         };
-        await fetch('/solicitacoes/add', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(solicitacao)
-        });
-        alert('Solicitação registrada');
+
+        try {
+            const res = await fetch('/solicitacoes/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(solicitacao)
+            });
+
+            if (res.ok) {
+                showMessage('Solicitação registrada com sucesso!', true);
+
+                // Resetar o formulário visualmente
+                document.querySelectorAll('#checkboxes input:checked').forEach(cb => cb.checked = false);
+                document.getElementById('btnSalvar').style.display = 'none';
+            } else {
+                showMessage('Erro ao registrar solicitação.');
+            }
+        } catch (err) {
+            console.error(err);
+            showMessage('Erro de conexão com o servidor.');
+        }
     });
 
     carregarItens();

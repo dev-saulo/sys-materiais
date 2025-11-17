@@ -4,33 +4,55 @@
     <title>Usuários</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="css/styleUsuarios.css">
+
     <script src="error-logger.js" defer></script>
 </head>
 <body>
-<h2>Cadastrar Usuário</h2>
-<form id="usuarioForm" aria-labelledby="tituloCadastro">
-    <label for="matriculaInput">Matrícula</label>
-    <input id="matriculaInput" name="matricula" maxlength="10" placeholder="Matrícula" required autocomplete="off" />
-    <label for="nomeInput">Nome</label>
-    <input id="nomeInput" name="nome" maxlength="100" placeholder="Nome" required autocomplete="off" />
-    <button type="submit">Salvar</button>
-</form>
-<div id="mensagem" role="alert" aria-live="polite" style="margin-top:10px;color:#c00"></div>
 
-<h2>Lista de Usuários</h2>
-<table id="usuarioTable" aria-describedby="listaUsuarios">
-    <thead>
-    <tr><th scope="col">Matrícula</th><th scope="col">Nome</th><th scope="col">Status</th><th scope="col">Ações</th></tr>
-    </thead>
-    <tbody></tbody>
-</table>
+<nav>
+    <a href="cadastraritem.html">Cadastrar Itens</a>
+    <a href="solicitarmaterial.html">Solicitar Materiais</a>
+    <a href="usuarios.html">Usuários</a> <a href="#">Sair</a>
+</nav>
 
-<script>
-    // Definir BASE para chamadas: se não estiver na porta 9090, usar explicitamente http://localhost:9090
-    const API_BASE = (window.location.port === '9090') ? '' : 'http://localhost:9090';
+<div class="container">
 
-    // Exibe mensagem sem usar alert (menos intrusivo)
+    <h2>Cadastrar Usuário</h2>
+
+    <form id="usuarioForm" aria-labelledby="tituloCadastro">
+
+        <label for="matriculaInput">Matrícula</label>
+        <input id="matriculaInput" name="matricula" maxlength="10" placeholder="Matrícula" required autocomplete="off" />
+
+        <label for="nomeInput">Nome</label>
+        <input id="nomeInput" name="nome" maxlength="100" placeholder="Nome" required autocomplete="off" />
+
+        <button type="submit">Salvar</button>
+    </form>
+
+    <div id="mensagem" role="alert" aria-live="polite"></div>
+
+    <h2 style="margin-top: 30px;">Lista de Usuários</h2>
+
+    <table id="usuarioTable" aria-describedby="listaUsuarios">
+        <thead>
+        <tr>
+            <th scope="col">Matrícula</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Status</th>
+            <th scope="col">Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+</div> <script>
+    // Mantendo sua lógica original, apenas ajustando o API_BASE para ser relativo se necessário
+    const API_BASE = '';
+
     function showMessage(text, ok = false) {
         const box = document.getElementById('mensagem');
         box.style.color = ok ? '#060' : '#c00';
@@ -38,6 +60,8 @@
         if (window.logError && !ok) {
             window.logError(text);
         }
+        // Limpa msg após 5s
+        setTimeout(() => { box.textContent = ''; }, 5000);
     }
 
     async function carregarUsuarios() {
@@ -49,6 +73,12 @@
             const usuarios = await res.json();
             const tbody = document.querySelector('#usuarioTable tbody');
             tbody.innerHTML = '';
+
+            if(usuarios.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center">Nenhum usuário encontrado.</td></tr>';
+                return;
+            }
+
             usuarios.forEach(usuario => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -61,7 +91,7 @@
             });
         } catch (error) {
             console.error('Erro ao carregar usuários:', error);
-            showMessage('Erro ao carregar usuários. Verifique se o servidor está rodando.', false);
+            showMessage('Erro ao carregar usuários. O servidor está rodando?', false);
         }
     }
 
@@ -70,19 +100,22 @@
         const formData = new FormData(e.target);
         const usuario = {
             matricula: formData.get('matricula')?.trim(),
-            nome: formData.get('nome')?.trim()
+            nome: formData.get('nome')?.trim(),
+            ativo: true // Garante que envia ativo por padrão
         };
-        // Validação simples no front
+
         if (!usuario.matricula || !usuario.nome) {
             showMessage('Preencha todos os campos.', false);
             return;
         }
+
         try {
             const res = await fetch(`${API_BASE}/usuarios/add`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(usuario)
             });
+
             if (res.ok) {
                 showMessage('Usuário cadastrado com sucesso!', true);
                 e.target.reset();
@@ -91,13 +124,10 @@
                 const errorText = await res.text();
                 console.error('Erro ao cadastrar usuário:', res.status, errorText);
                 showMessage(`Erro ao cadastrar usuário (HTTP ${res.status}).`, false);
-                if (window.logError) {
-                    window.logError('Erro ao cadastrar usuário', { status: res.status, response: errorText, usuario });
-                }
             }
         } catch (error) {
             console.error('Falha na requisição:', error);
-            showMessage('Falha ao conectar com o servidor. Verifique se está rodando.', false);
+            showMessage('Falha ao conectar com o servidor.', false);
         }
     });
 

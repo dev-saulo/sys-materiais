@@ -17,15 +17,25 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        // Permitir chamadas da porta do IntelliJ (63342) para facilitar testes quando a página for aberta dali
+        // Permitir chamadas entre portas locais mais comuns usadas no projeto
+        String[] origins = {"http://localhost:9090", "http://localhost:9091", "http://localhost:63342"};
+
         registry.addMapping("/usuarios/**")
-                .allowedOrigins("http://localhost:9090", "http://localhost:63342")
+                .allowedOrigins(origins)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)
                 .maxAge(3600);
+
+        registry.addMapping("/itens/**")
+                .allowedOrigins(origins)
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);
+
         registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:9090", "http://localhost:63342")
+                .allowedOrigins(origins)
                 .allowedMethods("POST")
                 .allowedHeaders("*")
                 .maxAge(3600);
